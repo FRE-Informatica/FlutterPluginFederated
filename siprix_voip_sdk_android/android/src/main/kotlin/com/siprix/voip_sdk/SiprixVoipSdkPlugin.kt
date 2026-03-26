@@ -622,6 +622,7 @@ class SiprixVoipSdkPlugin: FlutterPlugin,
 
     //Get core instance (create when hasn't created yet)
     _core = CallNotifService.createSiprixCore(_appContext)
+    _core.setModelListener(_eventListener)
   }
 
   override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
@@ -807,6 +808,8 @@ class SiprixVoipSdkPlugin: FlutterPlugin,
 
 
   private fun handleModuleInitialize(args : HashMap<String, Any?>, result: MethodChannel.Result) {
+    _core.setModelListener(_eventListener)
+
     if (_core.isInitialized) {
       startAndBindNotifService(args["serviceClassName"] as? String)
 
@@ -852,7 +855,13 @@ class SiprixVoipSdkPlugin: FlutterPlugin,
     if(recordStereo != null) { iniData.setRecordStereo(recordStereo); }
 
     val enableVideoCall : Boolean? = args["enableVideoCall"] as? Boolean
-    if(enableVideoCall != null) { iniData.setEnableVideoCall(enableVideoCall); }
+    if(enableVideoCall != null) { 
+      try {
+        iniData.setEnableVideoCall(enableVideoCall); 
+      } catch (e: UnsatisfiedLinkError) {
+        Log.w(TAG, "setEnableVideoCall is not supported by this Siprix SDK build")
+      }
+    }
 
     val transpForceIPv4 : Boolean? = args["transpForceIPv4"] as? Boolean
     if(transpForceIPv4 != null) { iniData.setTranspForceIPv4(transpForceIPv4); }

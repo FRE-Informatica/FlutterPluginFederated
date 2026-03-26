@@ -7,7 +7,7 @@ version: 1.0.35
 
 environment:
   sdk: ^3.2.0
-  flutter: '>=3.3.0'
+  flutter: ">=3.3.0"
 
 flutter:
   plugin:
@@ -27,12 +27,18 @@ dependencies:
   flutter:
     sdk: flutter
   intl: ^0.20.1
-  siprix_voip_sdk_android: ^1.0.28
-  siprix_voip_sdk_ios: ^1.0.32
-  siprix_voip_sdk_linux: ^1.0.22
-  siprix_voip_sdk_macos: ^1.0.22
-  siprix_voip_sdk_windows: ^1.0.23
-  siprix_voip_sdk_platform_interface: ^1.0.12
+  siprix_voip_sdk_android:
+    path: ../siprix_voip_sdk_android
+  siprix_voip_sdk_ios:
+    path: ../siprix_voip_sdk_ios
+  siprix_voip_sdk_linux:
+    path: ../siprix_voip_sdk_linux
+  siprix_voip_sdk_macos:
+    path: ../siprix_voip_sdk_macos
+  siprix_voip_sdk_windows:
+    path: ../siprix_voip_sdk_windows
+  siprix_voip_sdk_platform_interface:
+    path: ../siprix_voip_sdk_platform_interface
 
 dev_dependencies:
   flutter_test:

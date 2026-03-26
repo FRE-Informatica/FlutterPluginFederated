@@ -1,6 +1,12 @@
 group 'com.siprix.voip_sdk'
 version '1.0-SNAPSHOT'
 
+def siprixOriginalAar = file("$projectDir/libs/siprix_voip_sdk.original.aar")
+def siprixGeneratedDir = file("$buildDir/generated/siprix")
+def siprixPatchedClassesJar = file("$siprixGeneratedDir/classes.jar")
+def siprixPatchedJniDir = file("$siprixGeneratedDir/jni")
+def siprixPatchDir = file("$buildDir/intermediates/siprixAarPatch")
+
 buildscript {
     ext.kotlin_version = '1.7.10'
     repositories {
@@ -34,6 +40,58 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
+def patchSiprixAarTask = tasks.register('patchSiprixAar') {
+    inputs.file(siprixOriginalAar)
+    outputs.file(siprixPatchedClassesJar)
+    outputs.dir(siprixPatchedJniDir)
+
+    doLast {
+        if (!siprixOriginalAar.exists()) {
+            throw new GradleException("Missing original Siprix AAR at ${siprixOriginalAar}")
+        }
+
+        delete(siprixPatchDir, siprixGeneratedDir)
+
+        copy {
+            from zipTree(siprixOriginalAar)
+            into siprixPatchDir
+        }
+
+        def extractedClassesDir = new File(siprixPatchDir, 'classes')
+        def extractedClassesJar = new File(siprixPatchDir, 'classes.jar')
+
+        copy {
+            from zipTree(extractedClassesJar)
+            into extractedClassesDir
+        }
+
+        delete(fileTree(extractedClassesDir) {
+            include 'org/webrtc/**'
+            exclude 'org/webrtc/apprtc/**'
+            exclude 'org/webrtc/voiceengine/**'
+        })
+
+        delete(extractedClassesJar)
+        ant.zip(destfile: extractedClassesJar) {
+            fileset(dir: extractedClassesDir)
+        }
+        delete(extractedClassesDir)
+
+        siprixGeneratedDir.mkdirs()
+
+        copy {
+            from extractedClassesJar
+            into siprixGeneratedDir
+            rename { 'classes.jar' }
+        }
+
+        copy {
+            from new File(siprixPatchDir, 'jni')
+            into siprixPatchedJniDir
+        }
+    }
+}
+
 android {
     if (project.android.hasProperty("namespace")) {
         namespace 'com.siprix.voip_sdk'
@@ -52,6 +110,7 @@ android {
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+        main.jniLibs.srcDirs += siprixPatchedJniDir
         test.java.srcDirs += 'src/test/kotlin'
     }
 
@@ -77,6 +136,13 @@ android {
     }
 }
 
+tasks.named('preBuild').configure {
+    dependsOn(patchSiprixAarTask)
+}
+
 dependencies {    
-    implementation(name:'siprix_voip_sdk', ext:'aar')
+    compileOnly 'io.github.webrtc-sdk:android:144.7559.01'
+    implementation(files(siprixPatchedClassesJar) {
+        builtBy(patchSiprixAarTask)
+    })
 }

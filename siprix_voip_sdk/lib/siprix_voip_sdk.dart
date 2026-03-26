@@ -8,387 +8,542 @@ import 'accounts_model.dart';
 import 'network_model.dart';
 import 'calls_model.dart';
 
-
 /// Helper class for handling 'onAccountRegState' event raised by library
 class AccRegStateArg {
-  int accId=0;
-  RegState regState=RegState.success;
-  String response="";
+  int accId = 0;
+  RegState regState = RegState.inProgress;
+  String response = "";
 
   /// Returns true when even's atrributes parsed successfully
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
-    int stateVal=0;
+    bool hasAccId = false;
+    bool hasRegState = false;
+    int stateVal = 0;
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kArgAccId)&&(value is int))    { accId    = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kRegState)&&(value is int))    { stateVal = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kResponse)&&(value is String)) { response = value; argsCounter+=1; }
+      if ((key == SiprixVoipSdkPlatform.kArgAccId) && (value is int)) {
+        accId = value;
+        hasAccId = true;
+      } else if ((key == SiprixVoipSdkPlatform.kRegState) && (value is int)) {
+        stateVal = value;
+        hasRegState = true;
+      } else if (key == SiprixVoipSdkPlatform.kResponse) {
+        response = value is String ? value : "";
+      }
     });
 
     switch (stateVal) {
-      case SiprixVoipSdk.kRegStateSuccess: regState = RegState.success;
-      case SiprixVoipSdk.kRegStateFailed:  regState = RegState.failed;
-      case SiprixVoipSdk.kRegStateRemoved: regState = RegState.removed;
+      case SiprixVoipSdk.kRegStateSuccess:
+        regState = RegState.success;
+      case SiprixVoipSdk.kRegStateFailed:
+        regState = RegState.failed;
+      case SiprixVoipSdk.kRegStateRemoved:
+        regState = RegState.removed;
+      case SiprixVoipSdk.kRegStateInProgress:
+        regState = RegState.inProgress;
     }
-    return (argsCounter==3);
+    return hasAccId && hasRegState;
   }
 }
 
 /// Helper class for handling 'onSubscriptionState' event raised by library
 class SubscriptionStateArg {
-  int subscrId=0;
-  SubscriptionState state=SubscriptionState.created;
-  String response="";
+  int subscrId = 0;
+  SubscriptionState state = SubscriptionState.created;
+  String response = "";
 
   /// Returns true when even's atrributes parsed successfully
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
-    int stateVal=0;
+    int argsCounter = 0;
+    int stateVal = 0;
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kArgSubscrId)&&(value is int)) { subscrId = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kSubscrState)&&(value is int)) { stateVal = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kResponse)&&(value is String)) { response = value; argsCounter+=1; }
+      if ((key == SiprixVoipSdkPlatform.kArgSubscrId) && (value is int)) {
+        subscrId = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kSubscrState) &&
+          (value is int)) {
+        stateVal = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kResponse) &&
+          (value is String)) {
+        response = value;
+        argsCounter += 1;
+      }
     });
 
     switch (stateVal) {
-      case SiprixVoipSdk.kSubscrStateCreated:   state = SubscriptionState.created;
-      case SiprixVoipSdk.kSubscrStateUpdated:   state = SubscriptionState.updated;
-      case SiprixVoipSdk.kSubscrStateDestroyed: state = SubscriptionState.destroyed;
+      case SiprixVoipSdk.kSubscrStateCreated:
+        state = SubscriptionState.created;
+      case SiprixVoipSdk.kSubscrStateUpdated:
+        state = SubscriptionState.updated;
+      case SiprixVoipSdk.kSubscrStateDestroyed:
+        state = SubscriptionState.destroyed;
     }
-    return (argsCounter==3);
+    return (argsCounter == 3);
   }
 }
 
 /// Helper class for handling 'onNetworkState' event raised by library
 class NetworkStateArg {
-  String name="";
-  NetState state=NetState.lost;
+  String name = "";
+  NetState state = NetState.lost;
+
   /// Returns true when even's atrributes parsed successfully
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
-    int stateVal=0;
+    int argsCounter = 0;
+    int stateVal = 0;
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kArgName)&&(value is String)) { name     = value; argsCounter+=1; }
-      if((key == SiprixVoipSdkPlatform.kNetState)&&(value is int))   { stateVal = value; argsCounter+=1; }
+      if ((key == SiprixVoipSdkPlatform.kArgName) && (value is String)) {
+        name = value;
+        argsCounter += 1;
+      }
+      if ((key == SiprixVoipSdkPlatform.kNetState) && (value is int)) {
+        stateVal = value;
+        argsCounter += 1;
+      }
     });
 
     switch (stateVal) {
-      case SiprixVoipSdk.kNetStateLost:      state = NetState.lost;
-      case SiprixVoipSdk.kNetStateRestored:  state = NetState.restored;
-      case SiprixVoipSdk.kNetStateSwitched:  state = NetState.switched;
+      case SiprixVoipSdk.kNetStateLost:
+        state = NetState.lost;
+      case SiprixVoipSdk.kNetStateRestored:
+        state = NetState.restored;
+      case SiprixVoipSdk.kNetStateSwitched:
+        state = NetState.switched;
     }
 
-    return (argsCounter==2);
+    return (argsCounter == 2);
   }
 }
 
 /// Helper class for handling 'onPlayerState' event raised by library
 class PlayerStateArg {
-  int playerId=0;
-  PlayerState state=PlayerState.failed;
+  int playerId = 0;
+  PlayerState state = PlayerState.failed;
 
   /// Returns true when even's atrributes parsed successfully
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
+    int argsCounter = 0;
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kArgPlayerId)&&(value is int))    { playerId = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kPlayerState)&&(value is int))    { state = PlayerState.from(value); argsCounter+=1; }
+      if ((key == SiprixVoipSdkPlatform.kArgPlayerId) && (value is int)) {
+        playerId = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kPlayerState) &&
+          (value is int)) {
+        state = PlayerState.from(value);
+        argsCounter += 1;
+      }
     });
 
-    return (argsCounter==2);
+    return (argsCounter == 2);
   }
 }
 
 /// Helper class for handling 'onCallProceeding' event raised by library
 class CallProceedingArg {
-  int callId=0;
-  String response="";
+  int callId = 0;
+  String response = "";
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
+    int argsCounter = 0;
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kArgCallId)&&(value is int))   { callId   = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kResponse)&&(value is String)) { response = value; argsCounter+=1; }
+      if ((key == SiprixVoipSdkPlatform.kArgCallId) && (value is int)) {
+        callId = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kResponse) &&
+          (value is String)) {
+        response = value;
+        argsCounter += 1;
+      }
     });
-    return (argsCounter==2);
+    return (argsCounter == 2);
   }
 }
 
 /// Helper class for handling 'onCallIncoming' event raised by library
 class CallIncomingArg {
-  int accId=0;
-  int callId=0;
-  String from="";
-  String to="";
+  int accId = 0;
+  int callId = 0;
+  String from = "";
+  String to = "";
   bool withVideo = false;
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
+    int argsCounter = 0;
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kArgAccId)&&(value is int))      { accId     = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kArgCallId)&&(value is int))     { callId    = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kArgWithVideo)&&(value is bool)) { withVideo = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kFrom)&&(value is String))       { from      = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kTo)&&(value is String))         { to        = value; argsCounter+=1; }
+      if ((key == SiprixVoipSdkPlatform.kArgAccId) && (value is int)) {
+        accId = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kArgCallId) && (value is int)) {
+        callId = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kArgWithVideo) &&
+          (value is bool)) {
+        withVideo = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kFrom) && (value is String)) {
+        from = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kTo) && (value is String)) {
+        to = value;
+        argsCounter += 1;
+      }
     });
-    return (argsCounter==5);
+    return (argsCounter == 5);
   }
 }
 
 /// Helper class for handling 'onCallAcceptNotif' event raised by library
 class CallAcceptNotifArg {
-  int callId=0;
+  int callId = 0;
   bool withVideo = false;
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
+    int argsCounter = 0;
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kArgCallId)&&(value is int))     { callId = value;    argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kArgWithVideo)&&(value is bool)) { withVideo = value; argsCounter+=1; }
+      if ((key == SiprixVoipSdkPlatform.kArgCallId) && (value is int)) {
+        callId = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kArgWithVideo) &&
+          (value is bool)) {
+        withVideo = value;
+        argsCounter += 1;
+      }
     });
-    return (argsCounter==2);
+    return (argsCounter == 2);
   }
 }
 
 /// Helper class for handling 'onCallConnected' event raised by library
 class CallConnectedArg {
-  int callId=0;
-  String from="";
-  String to="";
+  int callId = 0;
+  String from = "";
+  String to = "";
   bool withVideo = false;
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
+    int argsCounter = 0;
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kArgWithVideo)&&(value is bool)) { withVideo = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kArgCallId)&&(value is int))     { callId = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kFrom)&&(value is String))       { from   = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kTo)&&(value is String))         { to     = value; argsCounter+=1; }
+      if ((key == SiprixVoipSdkPlatform.kArgWithVideo) && (value is bool)) {
+        withVideo = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kArgCallId) && (value is int)) {
+        callId = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kFrom) && (value is String)) {
+        from = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kTo) && (value is String)) {
+        to = value;
+        argsCounter += 1;
+      }
     });
-    return (argsCounter==4);
+    return (argsCounter == 4);
   }
 }
 
 /// Helper class for handling 'onCallTerminated' event raised by library
 class CallTerminatedArg {
-  int callId=0;
-  int statusCode=0;
+  int callId = 0;
+  int statusCode = 0;
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
+    int argsCounter = 0;
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kArgCallId)&&(value is int))     { callId     = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kArgStatusCode)&&(value is int)) { statusCode = value; argsCounter+=1; }
+      if ((key == SiprixVoipSdkPlatform.kArgCallId) && (value is int)) {
+        callId = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kArgStatusCode) &&
+          (value is int)) {
+        statusCode = value;
+        argsCounter += 1;
+      }
     });
-    return (argsCounter==2);
+    return (argsCounter == 2);
   }
 }
 
 /// Helper class for handling 'onCallDtmfReceived' event raised by library
 class CallDtmfReceivedArg {
-  int callId=0;
-  int tone=0;
+  int callId = 0;
+  int tone = 0;
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
+    int argsCounter = 0;
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kArgCallId)&&(value is int)) { callId = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kArgTone)&&(value is int))   { tone   = value; argsCounter+=1; }
+      if ((key == SiprixVoipSdkPlatform.kArgCallId) && (value is int)) {
+        callId = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kArgTone) && (value is int)) {
+        tone = value;
+        argsCounter += 1;
+      }
     });
-    return (argsCounter==2);
+    return (argsCounter == 2);
   }
 }
 
 /// Helper class for handling 'onCallTransferred' event raised by library
 class CallTransferredArg {
-  int callId=0;
-  int statusCode=0;
+  int callId = 0;
+  int statusCode = 0;
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
+    int argsCounter = 0;
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kArgCallId)&&(value is int))     { callId = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kArgStatusCode)&&(value is int)) { statusCode = value; argsCounter+=1; }
+      if ((key == SiprixVoipSdkPlatform.kArgCallId) && (value is int)) {
+        callId = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kArgStatusCode) &&
+          (value is int)) {
+        statusCode = value;
+        argsCounter += 1;
+      }
     });
-    return (argsCounter==2);
+    return (argsCounter == 2);
   }
 }
 
 /// Helper class for handling 'onCallVideoUpgraded' event raised by library
 class CallVideoUpgradedArg {
-  int callId=0;
-  bool withVideo=false;
+  int callId = 0;
+  bool withVideo = false;
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
+    int argsCounter = 0;
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kArgCallId)&&(value is int))     { callId = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kArgWithVideo)&&(value is bool)) { withVideo = value; argsCounter+=1; }
+      if ((key == SiprixVoipSdkPlatform.kArgCallId) && (value is int)) {
+        callId = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kArgWithVideo) &&
+          (value is bool)) {
+        withVideo = value;
+        argsCounter += 1;
+      }
     });
-    return (argsCounter==2);
+    return (argsCounter == 2);
   }
 }
 
 /// Helper class for handling 'onCallVideoUpgradeRequested' event raised by library
 class CallVideoUpgradeRequestedArg {
-  int callId=0;
+  int callId = 0;
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
+    int argsCounter = 0;
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kArgCallId)&&(value is int))     { callId = value; argsCounter+=1; }
+      if ((key == SiprixVoipSdkPlatform.kArgCallId) && (value is int)) {
+        callId = value;
+        argsCounter += 1;
+      }
     });
-    return (argsCounter==1);
+    return (argsCounter == 1);
   }
 }
 
 /// Helper class for handling 'onCallRedirected' event raised by library
 class CallRedirectedArg {
-  int origCallId=0;
-  int relatedCallId=0;
-  String referTo="";
+  int origCallId = 0;
+  int relatedCallId = 0;
+  String referTo = "";
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
+    int argsCounter = 0;
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kArgFromCallId)&&(value is int)) { origCallId = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kArgToCallId)&&(value is int))   { relatedCallId = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kArgToExt)&&(value is String))   { referTo = value; argsCounter+=1; }
+      if ((key == SiprixVoipSdkPlatform.kArgFromCallId) && (value is int)) {
+        origCallId = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kArgToCallId) &&
+          (value is int)) {
+        relatedCallId = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kArgToExt) &&
+          (value is String)) {
+        referTo = value;
+        argsCounter += 1;
+      }
     });
-    return (argsCounter==3);
+    return (argsCounter == 3);
   }
 }
 
 /// Helper class for handling 'onCallHeld' event raised by library
 class CallHeldArg {
-  int callId=0;
+  int callId = 0;
   HoldState state = HoldState.none;
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
+    int argsCounter = 0;
 
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kArgCallId)&&(value is int)) { callId = value;               argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kHoldState)&&(value is int)) { state  = HoldState.from(value); argsCounter+=1; }
+      if ((key == SiprixVoipSdkPlatform.kArgCallId) && (value is int)) {
+        callId = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kHoldState) && (value is int)) {
+        state = HoldState.from(value);
+        argsCounter += 1;
+      }
     });
-    return (argsCounter==2);
+    return (argsCounter == 2);
   }
 }
 
 /// Helper class for handling 'onCallHeld' event raised by library
 class CallKitMutedArg {
-  int callId=0;
+  int callId = 0;
   bool mute = false;
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
+    int argsCounter = 0;
 
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kArgCallId)&&(value is int)) { callId = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kArgMute)&&(value is bool)) { mute  = value; argsCounter+=1; }
+      if ((key == SiprixVoipSdkPlatform.kArgCallId) && (value is int)) {
+        callId = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kArgMute) && (value is bool)) {
+        mute = value;
+        argsCounter += 1;
+      }
     });
-    return (argsCounter==2);
+    return (argsCounter == 2);
   }
 }
 
-
 /// Helper class for handling 'onCallSwitched' event raised by library
 class CallSwitchedArg {
-  int callId=0;
+  int callId = 0;
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
+    int argsCounter = 0;
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kArgCallId)&&(value is int)) { callId = value; argsCounter+=1; }
+      if ((key == SiprixVoipSdkPlatform.kArgCallId) && (value is int)) {
+        callId = value;
+        argsCounter += 1;
+      }
     });
-    return (argsCounter==1);
+    return (argsCounter == 1);
   }
 }
 
 /// Helper class for handling 'onPushIncoming' event raised by library
 class PushIncomingArg {
-  String callUUID="";
-  Map<String, dynamic> pushPayload={};
+  String callUUID = "";
+  Map<String, dynamic> pushPayload = {};
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
+    int argsCounter = 0;
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kArgCallKitUuid)&&(value is String)) {
-        callUUID = value; argsCounter+=1; }
-      if((key == SiprixVoipSdkPlatform.kArgPushPayload)) {
+      if ((key == SiprixVoipSdkPlatform.kArgCallKitUuid) && (value is String)) {
+        callUUID = value;
+        argsCounter += 1;
+      }
+      if ((key == SiprixVoipSdkPlatform.kArgPushPayload)) {
         pushPayload = Map<String, dynamic>.from(value as Map);
-        argsCounter+=1; }
+        argsCounter += 1;
+      }
     });
-    return (argsCounter==2);
+    return (argsCounter == 2);
   }
 }
 
 /// Helper class for handling 'onMessageSentState' event raised by library
 class MessageSentStateArg {
   int messageId = 0;
-  bool success=false;
-  String response="";
+  bool success = false;
+  String response = "";
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
+    int argsCounter = 0;
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kArgMsgId)&&(value is int)) { messageId = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kSuccess)&&(value is bool)) { success = value;   argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kResponse)&&(value is String)) { response = value; argsCounter+=1; }
+      if ((key == SiprixVoipSdkPlatform.kArgMsgId) && (value is int)) {
+        messageId = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kSuccess) && (value is bool)) {
+        success = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kResponse) &&
+          (value is String)) {
+        response = value;
+        argsCounter += 1;
+      }
     });
-    return (argsCounter==3);
+    return (argsCounter == 3);
   }
 }
 
 /// Helper class for handling 'onMessageIncoming' event raised by library
 class MessageIncomingArg {
-  int accId = 0, messageId=0;
-  String from="";
-  String body="";
+  int accId = 0, messageId = 0;
+  String from = "";
+  String body = "";
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
+    int argsCounter = 0;
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kArgMsgId)&&(value is int)) { messageId = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kArgAccId)&&(value is int)) { accId = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kFrom)&&(value is String))  { from = value;  argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kBody)&&(value is String))  { body = value;  argsCounter+=1; }
+      if ((key == SiprixVoipSdkPlatform.kArgMsgId) && (value is int)) {
+        messageId = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kArgAccId) && (value is int)) {
+        accId = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kFrom) && (value is String)) {
+        from = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kBody) && (value is String)) {
+        body = value;
+        argsCounter += 1;
+      }
     });
-    return (argsCounter==4);
+    return (argsCounter == 4);
   }
 }
 
 /// Helper class for handling 'onSipNotify' event raised by library
 class SipNotifyArg {
   int accId = 0;
-  String hdrEvent="";
-  String body="";
+  String hdrEvent = "";
+  String body = "";
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
+    int argsCounter = 0;
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kArgAccId)&&(value is int)) { accId = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kEvent)&&(value is String)) { hdrEvent = value;  argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kBody)&&(value is String))  { body = value;  argsCounter+=1; }
+      if ((key == SiprixVoipSdkPlatform.kArgAccId) && (value is int)) {
+        accId = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kEvent) && (value is String)) {
+        hdrEvent = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kBody) && (value is String)) {
+        body = value;
+        argsCounter += 1;
+      }
     });
-    return (argsCounter==3);
+    return (argsCounter == 3);
   }
 }
 
 /// Helper class for handling 'onVuMeterLevel' event raised by library
 class VuMeterArg {
-  int micLevel=0, spkLevel=0;
+  int micLevel = 0, spkLevel = 0;
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
+    int argsCounter = 0;
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kMicLevel)&&(value is int)) { micLevel = value; argsCounter+=1; } else
-      if((key == SiprixVoipSdkPlatform.kSpkLevel)&&(value is int)) { spkLevel = value; argsCounter+=1; }
+      if ((key == SiprixVoipSdkPlatform.kMicLevel) && (value is int)) {
+        micLevel = value;
+        argsCounter += 1;
+      } else if ((key == SiprixVoipSdkPlatform.kSpkLevel) && (value is int)) {
+        spkLevel = value;
+        argsCounter += 1;
+      }
     });
-    return (argsCounter==2);
+    return (argsCounter == 2);
   }
 }
-
 
 /// Helper class for managing audio/video devices
 class MediaDevice {
   MediaDevice(this.index);
-  String  name="";
-  String  guid="";
+  String name = "";
+  String guid = "";
   int index = 0;
 
   bool fromMap(Map<dynamic, dynamic> argsMap) {
-    int argsCounter=0;
+    int argsCounter = 0;
     argsMap.forEach((key, value) {
-      if((key == SiprixVoipSdkPlatform.kArgDvcName)&&(value is String)) { name = value; argsCounter+=1; }
-      if((key == SiprixVoipSdkPlatform.kArgDvcGuid)&&(value is String)) { guid = value; argsCounter+=1; }
+      if ((key == SiprixVoipSdkPlatform.kArgDvcName) && (value is String)) {
+        name = value;
+        argsCounter += 1;
+      }
+      if ((key == SiprixVoipSdkPlatform.kArgDvcGuid) && (value is String)) {
+        guid = value;
+        argsCounter += 1;
+      }
     });
-    return (argsCounter==2);
+    return (argsCounter == 2);
   }
 }
-
 
 //-//////////////////////////////////////////////////////////////////////////
 //-Listeners using by models
@@ -396,6 +551,7 @@ class MediaDevice {
 /// Account state listener, usign by 'AccountsModel'
 class AccStateListener {
   AccStateListener({required this.regStateChanged});
+
   ///Triggered by library when account's state changed
   void Function(int accId, RegState state, String response) regStateChanged;
 }
@@ -403,7 +559,8 @@ class AccStateListener {
 /// Subscription state listener, usign by 'SubscriptionsModel'
 class SubscrStateListener {
   SubscrStateListener({required this.subscrStateChanged});
-  void Function(int subscrId, SubscriptionState state, String response) subscrStateChanged;
+  void Function(int subscrId, SubscriptionState state, String response)
+      subscrStateChanged;
 }
 
 /// Network state listener, usign by 'NetworkModel'
@@ -414,41 +571,71 @@ class NetStateListener {
 
 /// Call state listener, usign by 'CallsModel'
 class CallStateListener {
-  CallStateListener({this.proceeding, this.incoming, this.incomingPush, this.acceptNotif,
-    this.connected, this.terminated, this.dtmfReceived,
-    this.transferred, this.redirected, this.videoUpgraded, this.videoUpgradeRequested,
-    this.held, this.muted, this.syncState, this.switched, this.playerStateChanged});
+  CallStateListener(
+      {this.proceeding,
+      this.incoming,
+      this.incomingPush,
+      this.acceptNotif,
+      this.connected,
+      this.terminated,
+      this.dtmfReceived,
+      this.transferred,
+      this.redirected,
+      this.videoUpgraded,
+      this.videoUpgradeRequested,
+      this.held,
+      this.muted,
+      this.syncState,
+      this.switched,
+      this.playerStateChanged});
 
   ///Triggered by library when changed player state in specific call
   void Function(int playerId, PlayerState s)? playerStateChanged;
+
   ///Triggered by library when it makes outgoing call and received 1xx response.
-  void Function(int callId, String response)?  proceeding;
+  void Function(int callId, String response)? proceeding;
+
   ///Triggered by library when received incoming call (SIP INVITE request)
-  void Function(int callId, int accId, bool withVideo, String from, String to)? incoming;
+  void Function(int callId, int accId, bool withVideo, String from, String to)?
+      incoming;
+
   ///Triggered by library when received remote push notification (iOS only)
-  void Function(String callkit_CallUUID, Map<String, dynamic> pushPayload)? incomingPush;
+  void Function(String callkit_CallUUID, Map<String, dynamic> pushPayload)?
+      incomingPush;
+
   ///Triggered by library when call accepted by tap on notification (Android only)
   void Function(int callId, bool withVideo)? acceptNotif;
+
   ///Triggered by library when call successfully connected (received/sent 200 OK response on the SIP INVITE request/response).
   void Function(int callId, String from, String to, bool withVideo)? connected;
+
   ///Triggered by library when call terminated.
   void Function(int callId, int statusCode)? terminated;
+
   ///Triggered by library when received response on the previously sent REFER request (or timeout expired).
   void Function(int callId, int statusCode)? transferred;
+
   ///Triggered by library when received redirect request from remote side (remote side transfers call to new destination).
   void Function(int origCallId, int relatedCallId, String referTo)? redirected;
+
   ///Triggered by library when remote side requested to start send/receive video and request accepted.
   void Function(int callId, bool withVideo)? videoUpgraded;
+
   ///Triggered by library when remote side requested to start send/receive video
   void Function(int callId)? videoUpgradeRequested;
+
   ///Triggered by library when received DTMF tone from remote side.
   void Function(int callId, int tone)? dtmfReceived;
+
   ///Triggered by library when local or remote side has put call on hold
   void Function(int callId, HoldState)? held;
+
   ///Triggered by library when call has been muted by CallKit (iOS only)
   void Function(int callId, bool mute)? muted;
+
   ///Triggered by library from 'onAttachedToActivity'
   void Function(Map<String, dynamic> argsMap)? syncState;
+
   ///Triggered by library when new call gives audio focus
   void Function(int callId)? switched;
 }
@@ -456,22 +643,27 @@ class CallStateListener {
 /// Messages state listener, usign by 'MessagesModel'
 class MessagesStateListener {
   MessagesStateListener({required this.incoming, required this.sentState});
+
   ///Triggered by library when received confirmation on sent message or expired timeout
   void Function(int messageId, bool success, String response) sentState;
+
   ///Triggered by library when new text message received
-  void Function(int messageId, int accountId, String from, String body) incoming;
+  void Function(int messageId, int accountId, String from, String body)
+      incoming;
 }
 
 /// Sip notify listener, allows detect SIP NOTIFY events
 class SipNotifyListener {
   SipNotifyListener({required this.notifyReceived});
+
   ///Triggered by library when SIP NOTIFY received
-  void Function(int accId, String hdrEvent, String body)  notifyReceived;
+  void Function(int accId, String hdrEvent, String body) notifyReceived;
 }
 
 /// Vu meter listener, allows detect mic/spk levels
 class VuMeterListener {
   VuMeterListener({required this.vu});
+
   ///Triggered by library 10 times per sec, provided mic/spk volume level in range [0..9]
   void Function(int micLevel, int spkLevel) vu;
 }
@@ -497,27 +689,29 @@ abstract interface class ILogsModel {
 abstract interface class IAccountsModel {
   ///Get accountUri by its id
   String getUri(int accId);
+
   ///Get accountId by its uri
   int getAccId(String uri);
+
   ///Returns true if account with specified id enabled secure media
   bool hasSecureMedia(int accId);
+
   ///Returns true if account with specified id has 'upgradeToVideo' set to 'RecvOnly'
   bool isUpgradeToVideoModeRecvOnly(String uri);
+
   ///Refresh registration of the all accounts
   void refreshRegistration();
 }
 
-
-
 /// Root of the library implementation
 class SiprixVoipSdk {
   ///Log level constants
-  static const int kLogLevelStack   = 0;
-  static const int kLogLevelDebug   = 1;
-  static const int kLogLevelInfo    = 2;
+  static const int kLogLevelStack = 0;
+  static const int kLogLevelDebug = 1;
+  static const int kLogLevelInfo = 2;
   static const int kLogLevelWarning = 3;
-  static const int kLogLevelError   = 4;
-  static const int kLogLevelNone    = 5;
+  static const int kLogLevelError = 4;
+  static const int kLogLevelNone = 5;
 
   ///Sip transport constants
   static const int kSipTransportUdp = 0;
@@ -531,8 +725,9 @@ class SiprixVoipSdk {
 
   ///Account registration state constants
   static const int kRegStateSuccess = 0;
-  static const int kRegStateFailed  = 1;
+  static const int kRegStateFailed = 1;
   static const int kRegStateRemoved = 2;
+  static const int kRegStateInProgress = 3;
 
   ///Subscription state constants
   static const int kSubscrStateCreated = 0;
@@ -540,40 +735,40 @@ class SiprixVoipSdk {
   static const int kSubscrStateDestroyed = 2;
 
   ///Network state constants
-  static const int kNetStateLost     = 0;
+  static const int kNetStateLost = 0;
   static const int kNetStateRestored = 1;
   static const int kNetStateSwitched = 2;
 
   ///Player state constants
   static const int kPlayerStateStarted = 0;
   static const int kPlayerStateStopped = 1;
-  static const int kPlayerStateFailed  = 2;
+  static const int kPlayerStateFailed = 2;
 
   ///Audio codec constants
-  static const int kAudioCodecOpus  = 65;
-  static const int kAudioCodecISAC16= 66;
-  static const int kAudioCodecISAC32= 67;
-  static const int kAudioCodecG722  = 68;
-  static const int kAudioCodecILBC  = 69;
-  static const int kAudioCodecPCMU  = 70;
-  static const int kAudioCodecPCMA  = 71;
-  static const int kAudioCodecDTMF  = 72;
-  static const int kAudioCodecCN    = 73;
-  static const int kAudioCodecG729  = 74;
+  static const int kAudioCodecOpus = 65;
+  static const int kAudioCodecISAC16 = 66;
+  static const int kAudioCodecISAC32 = 67;
+  static const int kAudioCodecG722 = 68;
+  static const int kAudioCodecILBC = 69;
+  static const int kAudioCodecPCMU = 70;
+  static const int kAudioCodecPCMA = 71;
+  static const int kAudioCodecDTMF = 72;
+  static const int kAudioCodecCN = 73;
+  static const int kAudioCodecG729 = 74;
 
   ///Video codec constants
-  static const int kVideoCodecH264  = 80;
-  static const int kVideoCodecVP8   = 81;
-  static const int kVideoCodecVP9   = 82;
-  static const int kVideoCodecAV1   = 83;
+  static const int kVideoCodecH264 = 80;
+  static const int kVideoCodecVP8 = 81;
+  static const int kVideoCodecVP9 = 82;
+  static const int kVideoCodecAV1 = 83;
 
   ///DTMF method constants
-  static const int kDtmfMethodRtp  = 0;
+  static const int kDtmfMethodRtp = 0;
   static const int kDtmfMethodInfo = 1;
 
   ///Hold state constants
-  static const int kHoldStateNone   = 0;
-  static const int kHoldStateLocal  = 1;
+  static const int kHoldStateNone = 0;
+  static const int kHoldStateLocal = 1;
   static const int kHoldStateRemote = 2;
   static const int kHoldStateLocalAndRemote = 3;
 
@@ -581,22 +776,24 @@ class SiprixVoipSdk {
   static const int kUpgradeToVideoSendRecv = 0;
   static const int kUpgradeToVideoRecvOnly = 1;
   static const int kUpgradeToVideoInactive = 2;
-  static const int kUpgradeToVideoManual   = 3;
+  static const int kUpgradeToVideoManual = 3;
 
   ///Error codes constants
   static const int eOK = 0;
-  static const int eDuplicateAccount=-1021;
-  static const int eSubscrAlreadyExist=-1083;
+  static const int eDuplicateAccount = -1021;
+  static const int eSubscrAlreadyExist = -1083;
 
   ///Special callId used for creating renderer of the local camera
-  static const int kLocalVideoCallId=0;
+  static const int kLocalVideoCallId = 0;
 
   //-//////////////////////////////////////////////////////////////////////////////////////
   //-Channel and instance implementation
 
   static final SiprixVoipSdk _instance = SiprixVoipSdk._internal();
-  static  SiprixVoipSdk get instance => _instance;
-  factory SiprixVoipSdk() { return _instance; }
+  static SiprixVoipSdk get instance => _instance;
+  factory SiprixVoipSdk() {
+    return _instance;
+  }
 
   SiprixVoipSdk._internal();
 
@@ -604,20 +801,28 @@ class SiprixVoipSdk {
 
   ///Network state listener
   NetStateListener? netListener;
+
   ///Account state listener
   AccStateListener? accListener;
+
   ///Subscription state listener
   SubscrStateListener? subscrListener;
+
   ///Call state listener
   CallStateListener? callListener;
+
   ///Device changes listener
   DevicesStateListener? dvcListener;
+
   ///Trial mode listenerer
   TrialModeListener? trialListener;
+
   ///Messages listenerer
   MessagesStateListener? messagesListener;
+
   ///SipNotify listenerer
   SipNotifyListener? sipNotifyListener;
+
   ///VuMeter listenerer
   VuMeterListener? vuMeterListener;
 
@@ -632,7 +837,8 @@ class SiprixVoipSdk {
       logsModel?.print('$brand module initialized successfully');
       logsModel?.print('Version: $verStr');
     } on PlatformException catch (err) {
-      logsModel?.print('Can\'t initialize $brand module Err: ${err.code} ${err.message}');
+      logsModel?.print(
+          'Can\'t initialize $brand module Err: ${err.code} ${err.message}');
     }
   }
 
@@ -642,7 +848,8 @@ class SiprixVoipSdk {
       await _platform.unInitialize();
       logsModel?.print('Siprix module uninitialized');
     } on PlatformException catch (err) {
-      logsModel?.print('Can\'t uninitilize Siprix module Err: ${err.code} ${err.message}');
+      logsModel?.print(
+          'Can\'t uninitilize Siprix module Err: ${err.code} ${err.message}');
     }
   }
 
@@ -712,8 +919,11 @@ class SiprixVoipSdk {
   }
 
   /// Send DTMF tone to remote side of the specified call
-  Future<void> sendDtmf(int callId, String tones, int durationMs, int intertoneGapMs, [int method = kDtmfMethodRtp]) {
-    return _platform.sendDtmf(callId, tones, durationMs, intertoneGapMs, method);
+  Future<void> sendDtmf(
+      int callId, String tones, int durationMs, int intertoneGapMs,
+      [int method = kDtmfMethodRtp]) {
+    return _platform.sendDtmf(
+        callId, tones, durationMs, intertoneGapMs, method);
   }
 
   /// End specified call
@@ -853,14 +1063,15 @@ class SiprixVoipSdk {
   }
 
   Future<MediaDevice?> _getMediaDevice(int index, String methodName) async {
-     try {
-      Map<dynamic, dynamic>? argsMap = await _platform.getMediaDevice(index, methodName);
-      if(argsMap==null) return null;
+    try {
+      Map<dynamic, dynamic>? argsMap =
+          await _platform.getMediaDevice(index, methodName);
+      if (argsMap == null) return null;
 
       MediaDevice dvc = MediaDevice(index);
       return dvc.fromMap(argsMap) ? dvc : null;
     } on PlatformException catch (err) {
-      return Future.error((err.message==null) ? err.code : err.message!);
+      return Future.error((err.message == null) ? err.code : err.message!);
     }
   }
 
@@ -908,7 +1119,6 @@ class SiprixVoipSdk {
   //  return _platform.routeAudioTo(route);
   //}
 
-
   //-//////////////////////////////////////////////////////////////////////////////////////
   //-Siprix video renderers
 
@@ -937,9 +1147,11 @@ class SiprixVoipSdk {
 
   ///Update CallKit call details (app can invoke it twice:
   /// - first when got and extracted some data from push payload and second - when received INVITE and got 'sip_callId')
-  Future<void>? updateCallKitCallDetails(String callkit_CallUUID, int? sip_callId,
-                      [String? localizedCallerName, String? genericHandle, bool? withVideo]) {
-    return _platform.updateCallKitCallDetails(callkit_CallUUID, sip_callId, localizedCallerName, genericHandle, withVideo);
+  Future<void>? updateCallKitCallDetails(
+      String callkit_CallUUID, int? sip_callId,
+      [String? localizedCallerName, String? genericHandle, bool? withVideo]) {
+    return _platform.updateCallKitCallDetails(callkit_CallUUID, sip_callId,
+        localizedCallerName, genericHandle, withVideo);
   }
 
   ///Get CallKit call UUID assigned with SIP callId (iOS only)
@@ -951,7 +1163,6 @@ class SiprixVoipSdk {
   Future<void>? endCallKitCall(String callkit_CallUUID) {
     return _platform.endCallKitCall(callkit_CallUUID);
   }
-
 
   //-//////////////////////////////////////////////////////////////////////////////////////
   //-Android specific implementation
@@ -977,152 +1188,207 @@ class SiprixVoipSdk {
   ///Handles signals received from event channel
   Future<void> _eventsHandler(MethodCall methodCall) async {
     //debugPrint('event ${methodCall.method.toString()} ${methodCall.arguments.toString()}');
-    if(methodCall.arguments is! Map<dynamic, dynamic>) {
+    if (methodCall.arguments is! Map<dynamic, dynamic>) {
       return;
     }
 
-    Map<dynamic, dynamic> argsMap = methodCall.arguments as Map<dynamic, dynamic>;
-    switch(methodCall.method) {
-      case SiprixVoipSdkPlatform.kOnAccountRegState  : _onAccountRegState(argsMap);  break;
-      case SiprixVoipSdkPlatform.kOnSubscriptionState: _onSubscriptionState(argsMap);break;
-      case SiprixVoipSdkPlatform.kOnNetworkState     : _onNetworkState(argsMap);     break;
-      case SiprixVoipSdkPlatform.kOnPlayerState      : _onPlayerState(argsMap);      break;
+    Map<dynamic, dynamic> argsMap =
+        methodCall.arguments as Map<dynamic, dynamic>;
+    switch (methodCall.method) {
+      case SiprixVoipSdkPlatform.kOnAccountRegState:
+        _onAccountRegState(argsMap);
+        break;
+      case SiprixVoipSdkPlatform.kOnSubscriptionState:
+        _onSubscriptionState(argsMap);
+        break;
+      case SiprixVoipSdkPlatform.kOnNetworkState:
+        _onNetworkState(argsMap);
+        break;
+      case SiprixVoipSdkPlatform.kOnPlayerState:
+        _onPlayerState(argsMap);
+        break;
 
-      case SiprixVoipSdkPlatform.kOnPushIncoming     : _onPushIncoming(argsMap);     break;
-      case SiprixVoipSdkPlatform.kOnTrialModeNotif   : _onTrialModeNotif(argsMap);   break;
-      case SiprixVoipSdkPlatform.kOnDevicesChanged   : _onDevicesChanged(argsMap);   break;
+      case SiprixVoipSdkPlatform.kOnPushIncoming:
+        _onPushIncoming(argsMap);
+        break;
+      case SiprixVoipSdkPlatform.kOnTrialModeNotif:
+        _onTrialModeNotif(argsMap);
+        break;
+      case SiprixVoipSdkPlatform.kOnDevicesChanged:
+        _onDevicesChanged(argsMap);
+        break;
 
-      case SiprixVoipSdkPlatform.kOnCallIncoming     : _onCallIncoming(argsMap);     break;
-      case SiprixVoipSdkPlatform.kOnCallAcceptNotif  : _onCallAcceptNotif(argsMap);  break;
-      case SiprixVoipSdkPlatform.kOnCallConnected    : _onCallConnected(argsMap);    break;
-      case SiprixVoipSdkPlatform.kOnCallTerminated   : _onCallTerminated(argsMap);   break;
-      case SiprixVoipSdkPlatform.kOnCallProceeding   : _onCallProceeding(argsMap);   break;
-      case SiprixVoipSdkPlatform.kOnCallDtmfReceived : _onCallDtmfReceived(argsMap); break;
-      case SiprixVoipSdkPlatform.kOnCallTransferred  : _onCallTransferred(argsMap);  break;
-      case SiprixVoipSdkPlatform.kOnCallRedirected   : _onCallRedirected(argsMap);   break;
-      case SiprixVoipSdkPlatform.kOnCallVideoUpgraded: _onCallVideoUpgraded(argsMap); break;
-      case SiprixVoipSdkPlatform.kOnCallVideoUpgradeRequested: _onCallVideoUpgradeRequested(argsMap); break;
-      case SiprixVoipSdkPlatform.kOnCallSwitched     : _onCallSwitched(argsMap);     break;
-      case SiprixVoipSdkPlatform.kOnCallHeld         : _onCallHeld(argsMap);         break;
-      case SiprixVoipSdkPlatform.kOnCallKitMuted     : _onCallKitMuted(argsMap);     break;
-      case SiprixVoipSdkPlatform.kOnCallsSyncState   : _onCallsSyncState(argsMap);   break;
+      case SiprixVoipSdkPlatform.kOnCallIncoming:
+        _onCallIncoming(argsMap);
+        break;
+      case SiprixVoipSdkPlatform.kOnCallAcceptNotif:
+        _onCallAcceptNotif(argsMap);
+        break;
+      case SiprixVoipSdkPlatform.kOnCallConnected:
+        _onCallConnected(argsMap);
+        break;
+      case SiprixVoipSdkPlatform.kOnCallTerminated:
+        _onCallTerminated(argsMap);
+        break;
+      case SiprixVoipSdkPlatform.kOnCallProceeding:
+        _onCallProceeding(argsMap);
+        break;
+      case SiprixVoipSdkPlatform.kOnCallDtmfReceived:
+        _onCallDtmfReceived(argsMap);
+        break;
+      case SiprixVoipSdkPlatform.kOnCallTransferred:
+        _onCallTransferred(argsMap);
+        break;
+      case SiprixVoipSdkPlatform.kOnCallRedirected:
+        _onCallRedirected(argsMap);
+        break;
+      case SiprixVoipSdkPlatform.kOnCallVideoUpgraded:
+        _onCallVideoUpgraded(argsMap);
+        break;
+      case SiprixVoipSdkPlatform.kOnCallVideoUpgradeRequested:
+        _onCallVideoUpgradeRequested(argsMap);
+        break;
+      case SiprixVoipSdkPlatform.kOnCallSwitched:
+        _onCallSwitched(argsMap);
+        break;
+      case SiprixVoipSdkPlatform.kOnCallHeld:
+        _onCallHeld(argsMap);
+        break;
+      case SiprixVoipSdkPlatform.kOnCallKitMuted:
+        _onCallKitMuted(argsMap);
+        break;
+      case SiprixVoipSdkPlatform.kOnCallsSyncState:
+        _onCallsSyncState(argsMap);
+        break;
 
-      case SiprixVoipSdkPlatform.kOnMessageSentState : _onMessageSentState(argsMap); break;
-      case SiprixVoipSdkPlatform.kOnMessageIncoming  : _onMessageIncoming(argsMap);  break;
+      case SiprixVoipSdkPlatform.kOnMessageSentState:
+        _onMessageSentState(argsMap);
+        break;
+      case SiprixVoipSdkPlatform.kOnMessageIncoming:
+        _onMessageIncoming(argsMap);
+        break;
 
-      case SiprixVoipSdkPlatform.kOnSipNotify        : _onSipNotify(argsMap);        break;
-      case SiprixVoipSdkPlatform.kOnVuMeterLevel     : _onVuMeterLevel(argsMap);     break;
+      case SiprixVoipSdkPlatform.kOnSipNotify:
+        _onSipNotify(argsMap);
+        break;
+      case SiprixVoipSdkPlatform.kOnVuMeterLevel:
+        _onVuMeterLevel(argsMap);
+        break;
     }
   }
 
   void _onAccountRegState(Map<dynamic, dynamic> argsMap) {
     AccRegStateArg arg = AccRegStateArg();
-    if(arg.fromMap(argsMap)) {
+    if (arg.fromMap(argsMap)) {
       accListener?.regStateChanged.call(arg.accId, arg.regState, arg.response);
     }
   }
 
   void _onSubscriptionState(Map<dynamic, dynamic> argsMap) {
     SubscriptionStateArg arg = SubscriptionStateArg();
-    if(arg.fromMap(argsMap)) {
-      subscrListener?.subscrStateChanged.call(arg.subscrId, arg.state, arg.response);
+    if (arg.fromMap(argsMap)) {
+      subscrListener?.subscrStateChanged
+          .call(arg.subscrId, arg.state, arg.response);
     }
   }
 
   void _onNetworkState(Map<dynamic, dynamic> argsMap) {
     NetworkStateArg arg = NetworkStateArg();
-    if(arg.fromMap(argsMap)) {
+    if (arg.fromMap(argsMap)) {
       netListener?.networkStateChanged.call(arg.name, arg.state);
     }
   }
 
   void _onPlayerState(Map<dynamic, dynamic> argsMap) {
-    PlayerStateArg arg =PlayerStateArg();
-    if(arg.fromMap(argsMap)) {
+    PlayerStateArg arg = PlayerStateArg();
+    if (arg.fromMap(argsMap)) {
       callListener?.playerStateChanged?.call(arg.playerId, arg.state);
     }
   }
 
   void _onCallProceeding(Map<dynamic, dynamic> argsMap) {
     CallProceedingArg arg = CallProceedingArg();
-    if(arg.fromMap(argsMap)) {
+    if (arg.fromMap(argsMap)) {
       callListener?.proceeding?.call(arg.callId, arg.response);
     }
   }
 
   void _onCallTerminated(Map<dynamic, dynamic> argsMap) {
     CallTerminatedArg arg = CallTerminatedArg();
-    if(arg.fromMap(argsMap)) {
+    if (arg.fromMap(argsMap)) {
       callListener?.terminated?.call(arg.callId, arg.statusCode);
     }
   }
 
   void _onCallConnected(Map<dynamic, dynamic> argsMap) {
     CallConnectedArg arg = CallConnectedArg();
-    if(arg.fromMap(argsMap)) {
-      callListener?.connected?.call(arg.callId, arg.from, arg.to, arg.withVideo);
+    if (arg.fromMap(argsMap)) {
+      callListener?.connected
+          ?.call(arg.callId, arg.from, arg.to, arg.withVideo);
     }
   }
 
   void _onCallIncoming(Map<dynamic, dynamic> argsMap) {
     CallIncomingArg arg = CallIncomingArg();
-    if(arg.fromMap(argsMap)) {
-      callListener?.incoming?.call(arg.callId, arg.accId, arg.withVideo, arg.from, arg.to);
+    if (arg.fromMap(argsMap)) {
+      callListener?.incoming
+          ?.call(arg.callId, arg.accId, arg.withVideo, arg.from, arg.to);
     }
   }
 
   void _onCallAcceptNotif(Map<dynamic, dynamic> argsMap) {
     CallAcceptNotifArg arg = CallAcceptNotifArg();
-    if(arg.fromMap(argsMap)) {
+    if (arg.fromMap(argsMap)) {
       callListener?.acceptNotif?.call(arg.callId, arg.withVideo);
     }
   }
 
   void _onCallDtmfReceived(Map<dynamic, dynamic> argsMap) {
     CallDtmfReceivedArg arg = CallDtmfReceivedArg();
-    if(arg.fromMap(argsMap)) {
+    if (arg.fromMap(argsMap)) {
       callListener?.dtmfReceived?.call(arg.callId, arg.tone);
     }
   }
 
   void _onCallTransferred(Map<dynamic, dynamic> argsMap) {
     CallTransferredArg arg = CallTransferredArg();
-    if(arg.fromMap(argsMap)) {
+    if (arg.fromMap(argsMap)) {
       callListener?.transferred?.call(arg.callId, arg.statusCode);
     }
   }
 
   void _onCallVideoUpgraded(Map<dynamic, dynamic> argsMap) {
     CallVideoUpgradedArg arg = CallVideoUpgradedArg();
-    if(arg.fromMap(argsMap)) {
+    if (arg.fromMap(argsMap)) {
       callListener?.videoUpgraded?.call(arg.callId, arg.withVideo);
     }
   }
 
   void _onCallVideoUpgradeRequested(Map<dynamic, dynamic> argsMap) {
     CallVideoUpgradeRequestedArg arg = CallVideoUpgradeRequestedArg();
-    if(arg.fromMap(argsMap)) {
+    if (arg.fromMap(argsMap)) {
       callListener?.videoUpgradeRequested?.call(arg.callId);
     }
   }
 
   void _onCallRedirected(Map<dynamic, dynamic> argsMap) {
     CallRedirectedArg arg = CallRedirectedArg();
-    if(arg.fromMap(argsMap)) {
-      callListener?.redirected?.call(arg.origCallId, arg.relatedCallId, arg.referTo);
+    if (arg.fromMap(argsMap)) {
+      callListener?.redirected
+          ?.call(arg.origCallId, arg.relatedCallId, arg.referTo);
     }
   }
 
   void _onCallHeld(Map<dynamic, dynamic> argsMap) {
     CallHeldArg arg = CallHeldArg();
-    if(arg.fromMap(argsMap)) {
+    if (arg.fromMap(argsMap)) {
       callListener?.held?.call(arg.callId, arg.state);
     }
   }
 
   void _onCallKitMuted(Map<dynamic, dynamic> argsMap) {
     CallKitMutedArg arg = CallKitMutedArg();
-    if(arg.fromMap(argsMap)) {
+    if (arg.fromMap(argsMap)) {
       callListener?.muted?.call(arg.callId, arg.mute);
     }
   }
@@ -1134,29 +1400,31 @@ class SiprixVoipSdk {
 
   void _onCallSwitched(Map<dynamic, dynamic> argsMap) {
     CallSwitchedArg arg = CallSwitchedArg();
-    if(arg.fromMap(argsMap)) {
+    if (arg.fromMap(argsMap)) {
       callListener?.switched?.call(arg.callId);
     }
   }
 
   void _onPushIncoming(Map<dynamic, dynamic> argsMap) {
     PushIncomingArg arg = PushIncomingArg();
-    if(arg.fromMap(argsMap)) {
+    if (arg.fromMap(argsMap)) {
       callListener?.incomingPush?.call(arg.callUUID, arg.pushPayload);
     }
   }
 
   void _onMessageSentState(Map<dynamic, dynamic> argsMap) {
     MessageSentStateArg arg = MessageSentStateArg();
-    if(arg.fromMap(argsMap)) {
-      messagesListener?.sentState.call(arg.messageId, arg.success, arg.response);
+    if (arg.fromMap(argsMap)) {
+      messagesListener?.sentState
+          .call(arg.messageId, arg.success, arg.response);
     }
   }
 
   void _onMessageIncoming(Map<dynamic, dynamic> argsMap) {
     MessageIncomingArg arg = MessageIncomingArg();
-    if(arg.fromMap(argsMap)) {
-      messagesListener?.incoming.call(arg.messageId, arg.accId, arg.from, arg.body);
+    if (arg.fromMap(argsMap)) {
+      messagesListener?.incoming
+          .call(arg.messageId, arg.accId, arg.from, arg.body);
     }
   }
 
@@ -1170,16 +1438,15 @@ class SiprixVoipSdk {
 
   void _onSipNotify(Map<dynamic, dynamic> argsMap) {
     SipNotifyArg arg = SipNotifyArg();
-    if(arg.fromMap(argsMap)) {
+    if (arg.fromMap(argsMap)) {
       sipNotifyListener?.notifyReceived.call(arg.accId, arg.hdrEvent, arg.body);
     }
   }
 
   void _onVuMeterLevel(Map<dynamic, dynamic> argsMap) {
     VuMeterArg arg = VuMeterArg();
-    if(arg.fromMap(argsMap)) {
+    if (arg.fromMap(argsMap)) {
       vuMeterListener?.vu.call(arg.micLevel, arg.spkLevel);
     }
   }
-
-}//SiprixVoipSdk
+} //SiprixVoipSdk
